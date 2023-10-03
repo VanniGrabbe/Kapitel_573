@@ -11,11 +11,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/':(context) => const OnboardingPage(),
-        '/user_input_page':(context) => const InputUserPage(),
-        '/result_page':(context) => const ResultPage(),
+        '/': (context) => const OnboardingPage(),
+        '/user_input_page': (context) => const InputUserPage(),
+        '/result_page': (context) => const ResultPage(),
       },
-     
     );
   }
 }

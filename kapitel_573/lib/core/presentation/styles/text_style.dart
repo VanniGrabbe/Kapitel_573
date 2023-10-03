@@ -7,7 +7,7 @@ const kTextButton = TextStyle(
   color: kColorTextButton,
 );
 const kInputText = TextStyle(
-  fontSize: 20,
-  fontWeight: FontWeight.bold,
+  fontSize: 15,
+  fontWeight: FontWeight.normal,
   color: kColorText
 );

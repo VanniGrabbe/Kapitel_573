@@ -1,6 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:kapitel_573/core/data/remote_data_source.dart';
+import 'package:kapitel_573/core/presentation/styles/color_styles.dart';
 import 'package:kapitel_573/core/presentation/widgets/user_textfield.dart';
 
 class InputUserPage extends StatefulWidget {
@@ -12,40 +13,16 @@ class InputUserPage extends StatefulWidget {
 
 class _InputUserPageState extends State<InputUserPage> {
   TextEditingController usernameController = TextEditingController();
-  String name = '';
   int age = 0;
-
-  Future<void> getEstimatedAge(String text) async {
-    final name = usernameController.text;
-    if (name.isNotEmpty) {
-      final apiUrl = Uri.http('//api.agify.io');
-      
-      var http;
-      final response = await http.post(apiUrl);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        var estimatedAge = data['age'] as int;
-        estimatedAge = 'Geschätztes Alter: $estimatedAge' as int;
-         setState(() {
-          Navigator.of(context).pushNamed(
-            '/result_page',
-          );
-      });
-        }
-       
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-        'Bitte gebe einen Namen ein',
-      )));
-    }
-  }
+  String? name;
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
+        backgroundColor: kAppBarColor,
         title: const Text('Schätzen'),
       ),
       body: Padding(
@@ -58,17 +35,31 @@ class _InputUserPageState extends State<InputUserPage> {
           children: [
             UserTextfield(
               controller: usernameController,
-              title: '',
+              labelText: 'Bitte gebe Deinen Namen',
             ),
             const SizedBox(
               height: 30,
             ),
-            ElevatedButton(
-              
-                onPressed:(){
-                  getEstimatedAge(usernameController.text);
+            FutureBuilder(
+              future: getEstimatedAge(usernameController.text),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: kColorButton),
+                      onPressed: () {
+                        
+                        setState(() {
+                          var estimatedAge = snapshot.data;
 
-                } , child: const Text('Schätzen'))
+                          Navigator.of(context).pushNamed('/result_page',
+                              arguments: {'age': estimatedAge});
+                        });
+                      },
+                      child: const Text('Ergebnis anzeigen'));
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            )
           ],
         ),
       ),
